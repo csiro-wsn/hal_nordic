@@ -446,7 +446,8 @@ void nrfx_spim_uninit(nrfx_spim_t const * p_instance)
 
     nrf_spim_disable(p_spim);
 
-    nrf_gpio_cfg_default(nrf_spim_sck_pin_get(p_spim));
+    nrf_gpio_cfg_output(nrf_spim_sck_pin_get(p_spim));
+    nrf_gpio_pin_write(nrf_spim_sck_pin_get(p_spim), 0);
 
     uint32_t miso_pin = nrf_spim_miso_pin_get(p_spim);
     if (miso_pin != NRF_SPIM_PIN_NOT_CONNECTED)
@@ -457,7 +458,8 @@ void nrfx_spim_uninit(nrfx_spim_t const * p_instance)
     uint32_t mosi_pin = nrf_spim_mosi_pin_get(p_spim);
     if (mosi_pin != NRF_SPIM_PIN_NOT_CONNECTED)
     {
-        nrf_gpio_cfg_default(mosi_pin);
+        nrf_gpio_cfg_output(mosi_pin);
+        nrf_gpio_pin_write(mosi_pin, 0);
     }
 
     if (p_cb->ss_pin != NRFX_SPIM_PIN_NOT_USED)
