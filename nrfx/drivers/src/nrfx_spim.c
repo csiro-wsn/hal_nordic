@@ -520,9 +520,16 @@ void nrfx_spim_uninit(nrfx_spim_t const * p_instance)
 
     nrf_spim_disable(p_spim);
 
-    spim_pin_uninit(nrf_spim_sck_pin_get(p_spim));
+    if (IS_ENABLED(CONFIG_NRFX_SPIM_UNINIT_DRIVE_LOW)) {
+            nrf_gpio_cfg_output(nrf_spim_sck_pin_get(p_spim));
+            nrf_gpio_pin_write(nrf_spim_sck_pin_get(p_spim), 0);
+            nrf_gpio_cfg_output(nrf_spim_mosi_pin_get(p_spim));
+            nrf_gpio_pin_write(nrf_spim_mosi_pin_get(p_spim), 0);
+    } else {
+        spim_pin_uninit(nrf_spim_sck_pin_get(p_spim));
+        spim_pin_uninit(nrf_spim_mosi_pin_get(p_spim));
+    }
     spim_pin_uninit(nrf_spim_miso_pin_get(p_spim));
-    spim_pin_uninit(nrf_spim_mosi_pin_get(p_spim));
 #if NRFX_CHECK(NRFX_SPIM_EXTENDED_ENABLED)
     if (SPIM_DCX_PRESENT_VALIDATE(p_instance->drv_inst_idx))
     {
